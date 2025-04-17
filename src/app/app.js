@@ -4,6 +4,7 @@ import cookieParser from "cookie-parser";
 import config from "../config/config.js";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
+import globalErrorHandler from "../global/globalErrorHandler.js";
 
 // create express server
 const app = express();
@@ -61,5 +62,5 @@ app.use(
 // Application.Route
 
 // globalErrorHandler
-
+app.use(globalErrorHandler)
 export default app;
