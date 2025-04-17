@@ -3,6 +3,8 @@ import apiError from "../utils/apiError.js";
 import apiResponse from "../utils/apiResponse.js";
 import userModel from "../model/user.model.js";
 import bcrypt from "bcrypt";
+import config from "../config/config.js";
+import generateTokens from "../helper/generateTokens.js";
 
 // register controller
 const register = asyncHandler(async (req, res, next) => {
@@ -55,7 +57,26 @@ const login = asyncHandler(async (req, res, next) => {
     }
     // find the user in the database
     const userInDB = await userModel.findOne({ email });
-    return apiResponse(res, 200, userInDB, "User logged in successfully");
+    // Generate tokens
+    const { accessToken, refreshToken } = generateTokens(user);
+
+    // Set refresh token in cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true, // JS cannot access this cookie
+      secure: config.node_env === "production", // only send over HTTPS in production
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    // Send response with access token and user info
+    return apiResponse(
+      res,
+      200,
+      {
+        user,
+        accessToken,
+      },
+      "User logged in successfully"
+    );
   } catch (error) {
     throw new apiError(error.message, 500);
   }
