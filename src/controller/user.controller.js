@@ -35,4 +35,30 @@ const register = asyncHandler(async (req, res, next) => {
   return apiResponse(res, 201, user, "User created successfully");
 });
 
-export { register };
+// login controller
+const login = asyncHandler(async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    // check all the fields
+    if (!email || !password) {
+      throw new apiError("All fields are required", 400);
+    }
+    // check if user exists or not
+    const user = await userModel.findOne({ email });
+    if (!user) {
+      throw new apiError("User not found", 404);
+    }
+    // check if password is correct or not
+    const isPasswordCorrect = await bcrypt.compare(password, user.password);
+    if (!isPasswordCorrect) {
+      throw new apiError("Password is incorrect", 401);
+    }
+    // find the user in the database
+    const userInDB = await userModel.findOne({ email });
+    return apiResponse(res, 200, userInDB, "User logged in successfully");
+  } catch (error) {
+    throw new apiError(error.message, 500);
+  }
+});
+
+export { register, login };
