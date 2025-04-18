@@ -82,4 +82,14 @@ const login = asyncHandler(async (req, res, next) => {
   }
 });
 
-export { register, login };
+// logout controller
+const logout = asyncHandler(async (req, res, next) => {
+  res.clearCookie("refreshToken", {
+    httpOnly: true, // JS cannot access this cookie
+    secure: config.node_env === "production", // only send over HTTPS in production
+    sameSite: "strict",
+  });
+  return apiResponse(res, 200, null, "User logged out successfully");
+});
+
+export { register, login, logout };
