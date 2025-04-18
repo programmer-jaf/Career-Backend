@@ -16,7 +16,6 @@ const _config = {
   mail_user: process.env.MAIL_USER,
   mail_email: process.env.MAIL_EMAIL,
   mail_password: process.env.MAIL_PASSWORD,
-  mail_service: process.env.MAIL_SERVICE,
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
   mail_host: process.env.MAIL_HOST,

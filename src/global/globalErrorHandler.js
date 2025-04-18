@@ -13,7 +13,7 @@ const globalErrorHandler = (err, req, res, next) => {
     response.error = err;
   }
   // in production mode
-  if (process.env.NODE_ENV === "production") {
+  if (config.node_env === "production") {
     // Optionally override generic errors
     if (err.name === "ValidationError") {
       response.message = "Invalid data provided.";
