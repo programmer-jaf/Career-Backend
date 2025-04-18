@@ -6,6 +6,7 @@ import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import globalErrorHandler from "../global/globalErrorHandler.js";
 import userRouter from "../router/user.routes.js";
+import contacRouter from "../router/contact.routes.js";
 // create express server
 const app = express();
 
@@ -56,7 +57,7 @@ app.use("/api/v1/user", userRouter);
 // Blog.Route
 
 // Contact.Route
-
+app.use("/api/v1/contact", contacRouter);
 // Job.Route
 
 // Application.Route
