@@ -122,8 +122,8 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
 
 // reset-password controller
 const resetPassword = asyncHandler(async (req, res, next) => {
-  const { token, password } = req.body;
-
+  const { password } = req.body;
+  const { token } = req.params;
   if (!token || !password) {
     throw new apiError("Token and new password are required", 400);
   }

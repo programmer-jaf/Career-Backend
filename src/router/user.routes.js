@@ -13,6 +13,6 @@ const userRouter = Router();
 userRouter.post("/register", register);
 userRouter.post("/login", login);
 userRouter.post("/logout", authenticate, logout);
-userRouter.post("/forgot-password", forgotPassword);
-userRouter.post("/reset-password", resetPassword);
+userRouter.post("/forgot-password", authenticate, forgotPassword);
+userRouter.post("/reset-password/:token", authenticate, resetPassword);
 export default userRouter;
