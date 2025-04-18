@@ -7,6 +7,7 @@ import config from "../config/config.js";
 import generateTokens from "../helper/generateTokens.js";
 import crypto from "crypto";
 import sendResetEmail from "../helper/sendEmails.js";
+import jwt from "jsonwebtoken";
 // register controller
 const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, password, role } = req.body;
@@ -151,4 +152,49 @@ const resetPassword = asyncHandler(async (req, res, next) => {
   return apiResponse(res, 200, null, "Password reset successfully");
 });
 
-export { register, login, logout, forgotPassword, resetPassword };
+const refreshedToken = asyncHandler(async (req, res, next) => {
+  const refresh_token = req.cookies.refreshToken;
+
+  if (!refresh_token) {
+    throw new apiError("Invalid credentials", 401);
+  }
+
+  let decodedToken;
+  try {
+    decodedToken = jwt.verify(refresh_token, config.refresh_token_secret);
+  } catch (error) {
+    throw new apiError("Unauthorized", 401);
+  }
+
+  const userId = decodedToken._id;
+  const user = await userModel.findById(userId);
+  if (!user) {
+    throw new apiError("User not found", 404);
+  }
+
+  // Create new tokens
+  const accessToken = jwt.sign(
+    { _id: user._id },
+    config.access_token_secret,
+    { expiresIn: config.access_token_expiry } // e.g., "1h"
+  );
+
+  const newRefreshToken = jwt.sign(
+    { _id: user._id },
+    config.refresh_token_secret,
+    { expiresIn: config.refresh_token_expiry } // e.g., "7d"
+  );
+
+  // Store refresh token in cookie
+  res.cookie("refreshToken", newRefreshToken, {
+    httpOnly: true,
+    sameSite: "Strict",
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    secure: config.node_env === "production",
+  });
+
+  return apiResponse(res, 200, { accessToken }, "Token refreshed...");
+});
+
+
+export { register, login, logout, forgotPassword, resetPassword, refreshedToken };

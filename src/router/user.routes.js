@@ -3,6 +3,7 @@ import {
   forgotPassword,
   login,
   logout,
+  refreshedToken,
   register,
   resetPassword,
 } from "../controller/user.controller.js";
@@ -15,4 +16,5 @@ userRouter.post("/login", login);
 userRouter.post("/logout", authenticate, logout);
 userRouter.post("/forgot-password", authenticate, forgotPassword);
 userRouter.post("/reset-password/:token", authenticate, resetPassword);
+userRouter.get("/refresh-token", authenticate, refreshedToken);
 export default userRouter;
