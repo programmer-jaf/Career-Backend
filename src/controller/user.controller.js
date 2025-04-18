@@ -5,7 +5,8 @@ import userModel from "../model/user.model.js";
 import bcrypt from "bcrypt";
 import config from "../config/config.js";
 import generateTokens from "../helper/generateTokens.js";
-
+import crypto from "crypto";
+import sendResetEmail from "../helper/sendEmails.js";
 // register controller
 const register = asyncHandler(async (req, res, next) => {
   const { firstName, lastName, email, password, role } = req.body;
@@ -92,4 +93,31 @@ const logout = asyncHandler(async (req, res, next) => {
   return apiResponse(res, 200, null, "User logged out successfully");
 });
 
-export { register, login, logout };
+// reset-password controller
+const forgotPassword = asyncHandler(async (req, res, next) => {
+  const { email } = req.body;
+
+  // check if email is valid
+  if (!email) {
+    throw new apiError("Email is required", 400);
+  }
+  // check if user exists
+  const user = await userModel.findOne({ email });
+  if (!user) {
+    throw new apiError("User not found", 404);
+  }
+  // send reset password token
+  const token = crypto.randomBytes(32).toString("hex");
+  const expiry = Date.now() + 1000 * 60 * 15; // 15 mins
+
+  // update user in the database
+  user.resetPasswordToken = token;
+  user.resetPasswordTokenExpiry = expiry;
+  // save user in the database
+  await user.save();
+
+  await sendResetEmail(user.email, token);
+  return apiResponse(res, 200, null, "Password reset email sent successfully");
+});
+
+export { register, login, logout, forgotPassword, resetPassword };
