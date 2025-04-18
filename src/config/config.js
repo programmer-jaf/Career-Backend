@@ -19,6 +19,10 @@ const _config = {
   mail_service: process.env.MAIL_SERVICE,
   admin_email: process.env.ADMIN_EMAIL,
   admin_password: process.env.ADMIN_PASSWORD,
+  mail_host: process.env.MAIL_HOST,
+  mail_port: process.env.MAIL_PORT,
+  mail_secure: process.env.MAIL_SECURE,
+  mail_service: process.env.MAIL_SERVICES
 };
 
 const config = Object.freeze(_config);

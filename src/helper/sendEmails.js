@@ -1,19 +1,19 @@
 import nodemailer from "nodemailer";
 import config from "../config/config.js";
 const transporter = nodemailer.createTransport({
-  service: config.mail_service,
+  service: config.mail_service, // Gmail service
   auth: {
-    user: config.mail_email,
-    pass: config.mail_password,
+    user: config.mail_email, // Your Gmail address
+    pass: config.mail_password, // App Password generated from Google
   },
 });
 
 const sendResetEmail = async (userEmail, resetToken) => {
-  const resetLink = `${config.frontend_domain}/reset-password/${resetToken}`; // your Career frontend
+  const resetLink = `${config.frontend_domain}/reset-password/${resetToken}`; // your app URL
   const mailOptions = {
-    from: config.mail_email,
-    to: userEmail,
-    subject: "Reset your Career password",
+    from: '"Career" <programmerjaf@gmail.com>', // Sender's address
+    to: userEmail, // Recipient
+    subject: "Reset your password", // Subject line
     html: `
       <div style="font-family:sans-serif;">
         <h2>Password Reset</h2>
@@ -23,13 +23,17 @@ const sendResetEmail = async (userEmail, resetToken) => {
         </a>
         <p>This link will expire in 15 minutes.</p>
       </div>
-    `,
+    `, // HTML body
+    headers: {
+      "X-Mailer": "NodeMailer", // Identifies the sending software
+    },
   };
-  await transporter.sendMail(mailOptions, (error, info) => {
+
+  transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
-      console.log("error ", error);
+      console.log("Error:", error);
     } else {
-      console.log("Email sent successfully ", info.response);
+      console.log("Email sent successfully:", info.response);
     }
   });
 };
