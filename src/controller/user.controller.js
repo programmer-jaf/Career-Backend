@@ -120,4 +120,35 @@ const forgotPassword = asyncHandler(async (req, res, next) => {
   return apiResponse(res, 200, null, "Password reset email sent successfully");
 });
 
+// reset-password controller
+const resetPassword = asyncHandler(async (req, res, next) => {
+  const { token, password } = req.body;
+
+  if (!token || !password) {
+    throw new apiError("Token and new password are required", 400);
+  }
+
+  // Find user by token and check expiry
+  const user = await userModel.findOne({
+    resetPasswordToken: token,
+    resetPasswordTokenExpiry: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    throw new apiError("Invalid or expired token", 400);
+  }
+
+  // Hash new password
+  const hashedPassword = await bcrypt.hash(password, 10);
+  user.password = hashedPassword;
+
+  // Clear reset token
+  user.resetPasswordToken = undefined;
+  user.resetPasswordTokenExpiry = undefined;
+
+  await user.save();
+
+  return apiResponse(res, 200, null, "Password reset successfully");
+});
+
 export { register, login, logout, forgotPassword, resetPassword };

@@ -10,9 +10,8 @@ const transporter = nodemailer.createTransport({
 
 const sendResetEmail = async (userEmail, resetToken) => {
   const resetLink = `${config.frontend_domain}/reset-password/${resetToken}`; // your Career frontend
-
   const mailOptions = {
-    from: '"Career Support" <no-reply@career.com>',
+    from: config.mail_email,
     to: userEmail,
     subject: "Reset your Career password",
     html: `
@@ -26,7 +25,13 @@ const sendResetEmail = async (userEmail, resetToken) => {
       </div>
     `,
   };
-  await transporter.sendMail(mailOptions);
+  await transporter.sendMail(mailOptions, (error, info) => {
+    if (error) {
+      console.log("error ", error);
+    } else {
+      console.log("Email sent successfully ", info.response);
+    }
+  });
 };
 
 export default sendResetEmail;
