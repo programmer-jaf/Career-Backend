@@ -11,25 +11,32 @@ const blogSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
     content: {
       type: String,
       required: true,
     },
     image: {
-      type: String,
-      default: [
+      type: [
         {
           url: String,
         },
       ],
+      default: [],
     },
-    tag: {
-      type: String,
-    },
+    tag: [
+      {
+        type: String,
+      },
+    ],
     category: {
       type: String,
       required: true,
-      enum: ["Marketing", "Design", "Development", "Ui-Ux Design", "Lifestyle"],
+      enum: ["Marketing", "Design", "Development", "Ui_Ux Design", "Lifestyle"],
       default: "Development",
     },
     views: {
@@ -39,7 +46,7 @@ const blogSchema = new mongoose.Schema(
     status: {
       type: String,
       required: true,
-      enum: ["published", "draft"],
+      enum: ["published", "draft", "archived"],
       default: "draft",
     },
   },
@@ -47,3 +54,5 @@ const blogSchema = new mongoose.Schema(
     timestamps: true,
   }
 );
+
+export default blogSchema;
