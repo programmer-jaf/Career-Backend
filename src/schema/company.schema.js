@@ -14,7 +14,7 @@ const companySchema = new mongoose.Schema(
     website: {
       type: String,
     },
-    user: {
+    author: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
