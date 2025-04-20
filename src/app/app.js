@@ -66,5 +66,13 @@ app.use("/api/v1/contact", contactRouter);
 // globalErrorHandler
 app.use(globalErrorHandler);
 
+// not found
+app.use((req, res, next) => {
+  res.status(404).json({
+    success: false,
+    message: "Not Found",
+  });
+});
+
 // export app
 export default app;

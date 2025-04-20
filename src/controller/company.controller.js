@@ -1,9 +1,8 @@
 import apiError from "../utils/apiError.js";
-import userModel from "../model/user.model.js";
 import asyncHandler from "../utils/asyncHandler.js";
 import apiResponse from "../utils/apiResponse.js";
 import companyModel from "../model/company.model.js";
-export const createCompany = asyncHandler(async (req, res) => {
+const createCompany = asyncHandler(async (req, res) => {
   // logic here
   const { name } = req.body;
   if (!name) {
@@ -24,21 +23,52 @@ export const createCompany = asyncHandler(async (req, res) => {
     name,
     author: user,
   });
-  return apiResponse(res, 201, "Company created successfully",company);
+  return apiResponse(res, 201, "Company created successfully", company);
 });
 //
-export const getCompanyById = async (req, res) => {
+const getCompanyById = asyncHandler(async (req, res) => {
   // logic here
-};
+  const { id } = req.params;
+  const company = await companyModel.findById(id);
+  if (!company) {
+    throw new apiError("Company not found", 404);
+  }
+  return apiResponse(res, 200, null, company);
+});
 
-export const getAllCompanies = async (req, res) => {
+const getAllCompanies = asyncHandler(async (req, res) => {
   // logic here
-};
+  const companies = await companyModel.find();
+  return apiResponse(res, 200, null, companies);
+});
 
-export const updateCompany = async (req, res) => {
+// get company which created by user
+const getCompanyByUser = asyncHandler(async (req, res) => {
+  const userId = req.user;  // From the JWT token attached by the middleware
+  console.log("user id ",userId);
+
+  const companies = await companyModel.find({ author: userId });
+
+  if (companies.length === 0) {
+    return res.status(404).json({ message: "No companies found for this user." });
+  }
+  return apiResponse(res, 200, null, companies);
+});
+
+
+const updateCompany = async (req, res) => {
   // logic here
 };
 
 const deleteCompany = async (req, res) => {
   // logic here
 };
+
+export {
+  createCompany,
+  getCompanyById,
+  getAllCompanies,
+  updateCompany,
+  deleteCompany,
+  getCompanyByUser
+}

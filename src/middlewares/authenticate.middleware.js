@@ -17,7 +17,6 @@ const authenticate = (req, res, next) => {
       message: "Unauthorized",
     });
   }
-  console.log(decoded)
   req.user = decoded._id;
   next();
 };
