@@ -5,8 +5,8 @@ import config from "../config/config.js";
 import rateLimit from "express-rate-limit";
 import helmet from "helmet";
 import globalErrorHandler from "../global/globalErrorHandler.js";
-import userRouter from "../router/user.routes.js";
-import contacRouter from "../router/contact.routes.js";
+import userRouter from "../router/user.route.js";
+import contacRouter from "../router/contact.route.js";
 // create express server
 const app = express();
 
